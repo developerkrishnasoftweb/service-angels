@@ -1,0 +1,6 @@
+package com.krishnasoftweb.service_angels
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
