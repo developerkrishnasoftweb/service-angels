@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Service Angels',
       theme: ThemeData(
         primarySwatch: primaryColor,
+        fontFamily: 'Poppins-Regular'
       ),
       debugShowCheckedModeBanner: false,
       home: SignIn(),
