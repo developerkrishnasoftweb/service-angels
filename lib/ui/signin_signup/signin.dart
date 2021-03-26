@@ -21,7 +21,7 @@ class _SignInState extends State<SignIn> {
             left: 0,
             right: 0,
             child: Container(
-              height: size.height * 0.4,
+              height: size.height * 0.35,
               decoration: BoxDecoration(
                   gradient: LinearGradient(
                       begin: Alignment.topLeft,
