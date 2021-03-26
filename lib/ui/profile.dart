@@ -64,7 +64,8 @@ class _ProfileState extends State<Profile> {
                   )
                 ],
               ),
-              Expanded(child: Container(
+              Expanded(
+                  child: Container(
                 width: size.width * 0.9,
                 margin: EdgeInsets.only(bottom: 10, top: 60),
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
@@ -77,29 +78,32 @@ class _ProfileState extends State<Profile> {
                     borderRadius: BorderRadius.circular(15)),
                 child: Column(
                   children: [
-                    Text("Uncle John", style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff4B4B4B)
-                    )),
-                    Text("Verified professional", style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xffA4A0A0)
-                    )),
+                    Text("Uncle John",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff4B4B4B))),
+                    Text("Verified professional",
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xffA4A0A0))),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          for(int i = 0; i < 5; i++)
-                            Icon(Icons.star, color: i != 4 ? Color(0xffFFC107) : Color(0xffD6D6D6)),
+                          for (int i = 0; i < 5; i++)
+                            Icon(Icons.star,
+                                color: i != 4
+                                    ? Color(0xffFFC107)
+                                    : Color(0xffD6D6D6)),
                           SizedBox(width: 7),
-                          Text("4.7", style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff4B4B4B)
-                          )),
+                          Text("4.7",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff4B4B4B))),
                         ],
                       ),
                     ),
