@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:service_angels/constants/pallets.dart';
-import 'package:service_angels/ui/home.dart';
+import 'package:service_angels/enc_dec/enc_dec.dart';
+import 'package:service_angels/services/services.dart';
 import 'package:service_angels/ui/signin_signup/signup.dart';
 import 'package:service_angels/ui/widgets/input.dart';
+
+import '../home.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -10,6 +13,15 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  String userName = "", password = "";
+  bool isLoading = false;
+
+  setLoading(bool status) {
+    setState(() {
+      isLoading = status;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -84,8 +96,13 @@ class _SignInState extends State<SignIn> {
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff8B8B8B)))),
                     SizedBox(height: 45),
-                    input(text: "Email / Username"),
-                    input(text: "Password"),
+                    input(
+                        text: "Email / Username",
+                        onChanged: (v) => setState(() => userName = v)),
+                    input(
+                        text: "Password",
+                        onChanged: (v) => setState(() => password = v),
+                        obscureText: true),
                     Align(
                         alignment: Alignment.centerRight,
                         child: Text("Forgot Password?",
@@ -98,51 +115,61 @@ class _SignInState extends State<SignIn> {
                       height: 45,
                       width: double.infinity,
                       child: TextButton(
-                        style: ButtonStyle(),
-                        child: Text("Login",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                letterSpacing: 0.3)),
-                        onPressed: () => Navigator.pushReplacement(
-                            context, MaterialPageRoute(builder: (_) => Home())),
+                        child: isLoading
+                            ? SizedBox(
+                                height: 30,
+                                width: 30,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 3))
+                            : Text("Login",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    letterSpacing: 0.3)),
+                        onPressed: isLoading ? null : login,
                       ),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xff52E5E7),
-                                Color(0xff130CB7),
-                              ],
-                              stops: [
-                                0,
-                                1
-                              ]),
-                          borderRadius: BorderRadius.circular(8)),
+                      decoration: isLoading
+                          ? null
+                          : BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xff52E5E7),
+                                    Color(0xff130CB7),
+                                  ],
+                                  stops: [
+                                    0,
+                                    1
+                                  ]),
+                              borderRadius: BorderRadius.circular(8)),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 30),
                       child: RichText(
-                          text: TextSpan(
-                              text: "Don't have an account? ",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff6B6B6B)),
-                              children: [
-                            WidgetSpan(
+                        text: TextSpan(
+                            text: "Don't have an account? ",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff6B6B6B)),
+                            children: [
+                              WidgetSpan(
                                 child: GestureDetector(
-                              onTap: () => Navigator.push(context,
-                                  MaterialPageRoute(builder: (_) => SignUp())),
-                              child: Text("Sign Up",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryColor)),
-                            ))
-                          ])),
+                                  onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => SignUp())),
+                                  child: Text("Sign Up",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryColor)),
+                                ),
+                              )
+                            ]),
+                      ),
                     ),
                   ]),
                 ),
@@ -152,5 +179,23 @@ class _SignInState extends State<SignIn> {
         )
       ]),
     );
+  }
+
+  void login() async {
+    if (userName.isNotEmpty && password.isNotEmpty) {
+      setLoading(true);
+      Map<String, dynamic> loginData = {
+        "username": userName,
+        "password": password
+      };
+      print(encrypt(loginData.toString()));
+      await Services.login(loginData).then((value) {
+        if(value.status) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => Home()));
+        }
+      });
+      setLoading(false);
+    }
   }
 }

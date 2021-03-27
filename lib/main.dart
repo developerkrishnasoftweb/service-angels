@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:service_angels/constants/pallets.dart';
-import 'package:service_angels/ui/home.dart';
 import 'package:service_angels/ui/signin_signup/signin.dart';
 
 void main() {
