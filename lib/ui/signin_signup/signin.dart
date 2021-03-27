@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:service_angels/constants/pallets.dart';
-import 'package:service_angels/enc_dec/enc_dec.dart';
 import 'package:service_angels/services/services.dart';
 import 'package:service_angels/ui/signin_signup/signup.dart';
 import 'package:service_angels/ui/widgets/input.dart';
