@@ -5,7 +5,9 @@ class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
+  List<String> tabs = ["Gallery", "Info", "Reviews"];
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -36,7 +38,6 @@ class _ProfileState extends State<Profile> {
                         bottomLeft: Radius.circular(10),
                         bottomRight: Radius.circular(10))),
               )),
-          Positioned(child: Container()),
           Column(
             children: [
               AppBar(
@@ -78,6 +79,27 @@ class _ProfileState extends State<Profile> {
                     borderRadius: BorderRadius.circular(15)),
                 child: Column(
                   children: [
+                    // CustomPaint(
+                    //   painter: TagPainter(),
+                    //   size: Size(100, 100),
+                    // ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        width: 75,
+                        height: 30,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: Color(0xffFD3216).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Text("offline",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xffFD3216))),
+                      ),
+                    ),
                     Text("Uncle John",
                         style: TextStyle(
                             fontSize: 16,
@@ -87,7 +109,7 @@ class _ProfileState extends State<Profile> {
                         style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xffA4A0A0))),
+                            color: Color(0xffa4a0a0))),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -107,13 +129,171 @@ class _ProfileState extends State<Profile> {
                         ],
                       ),
                     ),
+                    Text("Service Offered to: 1200",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff666666))),
+                    Text("Rates : 40 p.m",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff666666))),
+                    SizedBox(height: 20),
+                    Expanded(
+                      child: DefaultTabController(
+                        length: tabs.length,
+                        initialIndex: 1,
+                        child: Column(children: [
+                          TabBar(
+                              physics: BouncingScrollPhysics(),
+                              indicatorColor: Color(0xff2C62CA),
+                              labelColor: Color(0xff2C62CA),
+                              unselectedLabelColor: Color(0xffBABABA),
+                              tabs: tabs
+                                  .map((e) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(e,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16)),
+                                      ))
+                                  .toList()),
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                Center(child: Text("Gallery")),
+                                info(),
+                                Center(child: Text("Reviews")),
+                              ],
+                              physics: BouncingScrollPhysics(),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    )
                   ],
                 ),
               ))
             ],
-          )
+          ),
+          Align(
+              alignment: Alignment(0.0, -0.77),
+              child: ClipRRect(
+                  child: Image.asset("assets/images/profile-image.png"),
+                  borderRadius: BorderRadius.circular(100))),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: ImageIcon(AssetImage("assets/images/icons/calendar-icon.png")),
+        onPressed: () {},
+        backgroundColor: Color(0xff2C62CA),
+      ),
+    );
+  }
+
+  Widget info() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      physics: BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              child: Text("Services",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Color(0xff494747))),
+            ),
+          ),
+          serviceRow("Experience", "simply dummy"),
+          serviceRow("Skills", "simply dummy"),
+          serviceRow("Expertise", "simply dummy"),
+          serviceRow("Languages Known", "simply dummy"),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              child: Text("Description",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Color(0xff494747))),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(13),
+                border: Border.all(color: Color(0xffE9E9E9))),
+            child: Text(
+                "simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s  Lorem Ipsum has been the industry's standard dummy text ",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Color(0xff9B9B9B))),
+          ),
         ],
       ),
     );
+  }
+
+  Widget serviceRow(String title, String value) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              child: Text("$title",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      color: Color(0xff4A4747).withOpacity(0.8)),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis),
+            )),
+            Expanded(
+                child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                      child: Text("$value",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                              color: Color(0xff4A4747).withOpacity(0.8)),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis),
+                    ))),
+          ],
+        ),
+        Divider(color: Color(0xffE9E9E9), thickness: 2),
+      ],
+    );
+  }
+}
+
+class TagPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = Colors.yellow
+      ..strokeCap = StrokeCap.round..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+    Path path = Path();
+    path.moveTo(60, 130);
+    path.lineTo(50, 80);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }

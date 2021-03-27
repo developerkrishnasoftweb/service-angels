@@ -52,7 +52,10 @@ class _SignInState extends State<SignIn> {
             Expanded(
               child: Container(
                 width: size.width * 0.9,
-                margin: EdgeInsets.only(bottom: size.height * 0.1),
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom > 0
+                        ? 10
+                        : size.height * 0.1),
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -96,13 +99,14 @@ class _SignInState extends State<SignIn> {
                       width: double.infinity,
                       child: TextButton(
                         style: ButtonStyle(),
-                        child: Text("Login", style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          letterSpacing: 0.3
-                        )),
-                        onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Home())),
+                        child: Text("Login",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 0.3)),
+                        onPressed: () => Navigator.pushReplacement(
+                            context, MaterialPageRoute(builder: (_) => Home())),
                       ),
                       decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -130,7 +134,8 @@ class _SignInState extends State<SignIn> {
                               children: [
                             WidgetSpan(
                                 child: GestureDetector(
-                                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SignUp())),
+                              onTap: () => Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) => SignUp())),
                               child: Text("Sign Up",
                                   style: TextStyle(
                                       fontSize: 15,

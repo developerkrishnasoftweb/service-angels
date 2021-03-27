@@ -136,7 +136,7 @@ class _HomeState extends State<Home> {
                           enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                   color: Colors.white.withOpacity(0.5),
-                                  width: 2),
+                                  width: 2.5),
                               borderRadius: BorderRadius.circular(6)),
                           border: OutlineInputBorder(),
                           focusedBorder: OutlineInputBorder(
@@ -181,7 +181,8 @@ class _HomeState extends State<Home> {
                         padding: EdgeInsets.zero,
                         physics: BouncingScrollPhysics(),
                         itemBuilder: (_, index) {
-                          return buildConsultantsCard(context, isOnline: index != 1);
+                          return buildConsultantsCard(context,
+                              isOnline: index != 1);
                         },
                         itemCount: 3),
                   )
@@ -209,7 +210,8 @@ Widget buildConsultantsCard(BuildContext context, {bool isOnline: true}) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Profile())),
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Profile())),
               child: Container(
                 padding: EdgeInsets.all(3),
                 alignment: Alignment.center,
