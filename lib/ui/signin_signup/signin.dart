@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:service_angels/constants/pallets.dart';
 import 'package:service_angels/enc_dec/enc_dec.dart';
@@ -102,7 +104,7 @@ class _SignInState extends State<SignIn> {
                     input(
                         text: "Password",
                         onChanged: (v) => setState(() => password = v),
-                        obscureText: true),
+                        obscureText: false),
                     Align(
                         alignment: Alignment.centerRight,
                         child: Text("Forgot Password?",
@@ -184,15 +186,14 @@ class _SignInState extends State<SignIn> {
   void login() async {
     if (userName.isNotEmpty && password.isNotEmpty) {
       setLoading(true);
-      Map<String, dynamic> loginData = {
-        "username": userName,
-        "password": password
-      };
-      print(encrypt(loginData.toString()));
-      await Services.login(loginData).then((value) {
-        if(value.status) {
+      String data = """{"username" : "$userName", "password" : "$password"}""";
+      await Services.login(data).then((value) {
+        if (value.status) {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => Home()));
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(value.message)));
         }
       });
       setLoading(false);

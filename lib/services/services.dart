@@ -10,10 +10,10 @@ class Services {
   static String internetMsg = "No internet connection";
   static String somethingWentWrong = "Something went wrong, please try later";
 
-  static Future<Data> login(Map<String, dynamic> body) async {
+  static Future<Data> login(String body) async {
     try {
       http.Response response = await http
-          .post(Uri.https(Urls.baseUrl, Urls.login), body: {"token" : encrypt(body.toString())});
+          .post(Uri.https(Urls.baseUrl, Urls.login), body: {"token" : encrypt(body)});
       if (response.statusCode == 200) {
         return Data.fromJson(jsonDecode(decrypt(response.body)));
       }
