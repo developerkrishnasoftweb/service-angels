@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:service_angels/constants/pallets.dart';
+import 'package:service_angels/enc_dec/enc_dec.dart';
 import 'package:service_angels/services/services.dart';
 import 'package:service_angels/ui/signin_signup/signup.dart';
 import 'package:service_angels/ui/widgets/input.dart';
@@ -97,11 +98,16 @@ class _SignInState extends State<SignIn> {
                     SizedBox(height: 45),
                     input(
                         text: "Email / Username",
-                        onChanged: (v) => setState(() => userName = v)),
+                        onChanged: (v) => setState(() => userName = v),
+                        onEditingComplete: () =>
+                            FocusScope.of(context).nextFocus(),
+                        textInputAction: TextInputAction.next),
                     input(
                         text: "Password",
                         onChanged: (v) => setState(() => password = v),
-                        obscureText: false),
+                        obscureText: true,
+                        onEditingComplete: login,
+                        textInputAction: TextInputAction.next),
                     Align(
                         alignment: Alignment.centerRight,
                         child: Text("Forgot Password?",
@@ -194,6 +200,9 @@ class _SignInState extends State<SignIn> {
         }
       });
       setLoading(false);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please enter username and password")));
     }
   }
 }

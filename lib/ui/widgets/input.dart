@@ -11,6 +11,7 @@ Widget input(
     TextInputType keyboardType,
     ValueChanged<String> onChanged,
     bool obscureText,
+    TextInputAction textInputAction,
     VoidCallback onEditingComplete}) {
   assert(text != null && text.isNotEmpty, 'Text can not be null or empty');
   return Padding(
@@ -31,6 +32,7 @@ Widget input(
           onChanged: onChanged,
           obscureText: obscureText ?? false,
           onEditingComplete: onEditingComplete,
+          textInputAction: textInputAction,
           decoration: decoration ??
               InputDecoration(
                   border: OutlineInputBorder(

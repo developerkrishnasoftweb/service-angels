@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:service_angels/constants/pallets.dart';
+import 'package:service_angels/enc_dec/enc_dec.dart';
+import 'package:service_angels/ui/widgets/custom_dropdown.dart';
 import 'package:service_angels/ui/widgets/input.dart';
 
 class SignUp extends StatefulWidget {
@@ -9,6 +11,22 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   bool isCheckedTnC = false;
+  List<String> titles = ["Mr", "Mrs"];
+  String title = "",
+      username = "",
+      firstName = "",
+      lastName = "",
+      phoneNumber = "",
+      emailId = "",
+      pinCode = "",
+      password = "",
+      confirmPassword = "", userType = "1", telephoneService = "1";
+
+  @override
+  void initState() {
+    super.initState();
+    title = titles[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +100,23 @@ class _SignUpState extends State<SignUp> {
                                 color: Color(0xff8B8B8B)))),
                     SizedBox(height: 20),
                     input(text: "User Name"),
+                    dropDown<String>(
+                        onChanged: (value) {
+                          setState(() {
+                            title = value;
+                          });
+                        },
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        value: title,
+                        items: titles
+                            .map((e) => DropdownMenuItem(
+                                  child: Text(e),
+                                  value: e,
+                                ))
+                            .toList(),
+                        label: "Title"),
+                    input(text: "First Name"),
+                    input(text: "Last Name"),
                     input(text: "Phone Number"),
                     input(text: "Email id"),
                     input(text: "Pincode"),
@@ -92,14 +127,13 @@ class _SignUpState extends State<SignUp> {
                       height: 45,
                       width: double.infinity,
                       child: TextButton(
-                        style: ButtonStyle(),
                         child: Text("Sign Up",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                                 letterSpacing: 0.3)),
-                        onPressed: () {},
+                        onPressed: signUp,
                       ),
                       decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -166,5 +200,20 @@ class _SignUpState extends State<SignUp> {
         )
       ]),
     );
+  }
+
+  void signUp() async {
+    String data = """{
+      "usertype": $userType,
+      "title": $title,
+      "firstname": $firstName,
+      "lastname": $lastName,
+      "seller_email": $emailId,
+      "seller_user_name": $username,
+      "seller_pass": $password,
+      "seller_mobile": $phoneNumber,
+      "seller_pincode": $pinCode,
+      "telephone_service": $telephoneService
+    }""";
   }
 }
