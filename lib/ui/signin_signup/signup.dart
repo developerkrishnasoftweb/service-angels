@@ -12,15 +12,15 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   bool isCheckedTnC = false;
   List<String> titles = ["Mr", "Mrs"];
-  String title = "",
-      username = "",
-      firstName = "",
-      lastName = "",
-      phoneNumber = "",
-      emailId = "",
-      pinCode = "",
-      password = "",
-      confirmPassword = "", userType = "1", telephoneService = "1";
+  TextEditingController username = TextEditingController(),
+      firstName = TextEditingController(),
+      lastName = TextEditingController(),
+      phoneNumber = TextEditingController(),
+      emailId = TextEditingController(),
+      pinCode = TextEditingController(),
+      password = TextEditingController(),
+      confirmPassword = TextEditingController();
+  String title = "", userType = "1", telephoneService = "1";
 
   @override
   void initState() {
@@ -99,7 +99,10 @@ class _SignUpState extends State<SignUp> {
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff8B8B8B)))),
                     SizedBox(height: 20),
-                    input(text: "User Name"),
+                    input(
+                        text: "User Name",
+                        controller: username,
+                        onChanged: null),
                     dropDown<String>(
                         onChanged: (value) {
                           setState(() {
@@ -115,13 +118,31 @@ class _SignUpState extends State<SignUp> {
                                 ))
                             .toList(),
                         label: "Title"),
-                    input(text: "First Name"),
-                    input(text: "Last Name"),
-                    input(text: "Phone Number"),
-                    input(text: "Email id"),
-                    input(text: "Pincode"),
-                    input(text: "Password"),
-                    input(text: "Confirm Password"),
+                    input(
+                        text: "First Name", controller: firstName),
+                    input(
+                        text: "Last Name",
+                        controller: lastName),
+                    input(
+                        text: "Phone Number",
+                        keyboardType: TextInputType.phone,
+                        controller: phoneNumber),
+                    input(
+                        text: "Email id",
+                        keyboardType: TextInputType.emailAddress,
+                        controller: emailId),
+                    input(
+                        text: "Pincode",
+                        keyboardType: TextInputType.number,
+                        controller: pinCode),
+                    input(
+                        text: "Password",
+                        obscureText: true,
+                        controller: password),
+                    input(
+                        text: "Confirm Password",
+                        obscureText: true,
+                        controller: confirmPassword),
                     SizedBox(height: 20),
                     Container(
                       height: 45,
@@ -203,17 +224,49 @@ class _SignUpState extends State<SignUp> {
   }
 
   void signUp() async {
-    String data = """{
+    if (isCheckedTnC) {
+      if (password.text == confirmPassword.text) {
+        String data = """{
       "usertype": $userType,
-      "title": $title,
-      "firstname": $firstName,
-      "lastname": $lastName,
-      "seller_email": $emailId,
-      "seller_user_name": $username,
-      "seller_pass": $password,
-      "seller_mobile": $phoneNumber,
-      "seller_pincode": $pinCode,
+      "title": "$title",
+      "firstname": "${firstName.text}",
+      "lastname": "${lastName.text}",
+      "seller_email": "${emailId.text}",
+      "seller_user_name": "${username.text}",
+      "seller_pass": "${password.text}",
+      "seller_mobile": "${phoneNumber.text}",
+      "seller_pincode": "${pinCode.text}",
       "telephone_service": $telephoneService
     }""";
+        print(data);
+        print(encrypt(data));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Password and confirm password does not matched")));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("To continue please agree our terms and conditions")));
+    }
   }
+
+  // void validateUsername(String v) {
+  //   if (RegExp(r"^[a-zA-Z0-9]+$").hasMatch(v)) {
+  //     return v;
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         content: Text("Username should not contain any special character")));
+  //     return '';
+  //   }
+  // }
+  //
+  // String validateNameString(String v) {
+  //   if (RegExp(r"^[a-zA-Z\s]+$").hasMatch(v)) {
+  //     return v;
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         content: Text("Name should not contain any special character")));
+  //     return '';
+  //   }
+  // }
 }
