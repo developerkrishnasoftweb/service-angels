@@ -24,6 +24,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    // setLoading(false);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -190,6 +191,7 @@ class _SignInState extends State<SignIn> {
     if (userName.isNotEmpty && password.isNotEmpty) {
       setLoading(true);
       String data = """{"username" : "$userName", "password" : "$password"}""";
+      print(encrypt(data));
       await Services.login(data).then((value) {
         if (value.status) {
           Navigator.pushReplacement(

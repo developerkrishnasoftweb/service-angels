@@ -7,21 +7,22 @@ import 'urls.dart';
 import 'package:http/http.dart' as http;
 
 class Services {
-  static String internetMsg = "No internet connection";
+  static String noInternetConnection = "No internet connection";
   static String somethingWentWrong = "Something went wrong, please try later";
 
   static Future<Data> login(String body) async {
     try {
-      http.Response response = await http
-          .post(Uri.https(Urls.baseUrl, Urls.login), body: {"token" : encrypt(body)});
+      http.Response response = await http.post(
+          Uri.https(Urls.baseUrl, Urls.login),
+          body: {"token": encrypt(body)});
       if (response.statusCode == 200) {
         return Data.fromJson(jsonDecode(decrypt(response.body)));
       }
       return Data(status: false, message: somethingWentWrong, data: null);
     } on SocketException catch (_) {
-      throw (_);
-    } catch(_) {
-      throw (_);
+      return Data(status: false, message: noInternetConnection, data: null);
+    } catch (e) {
+      return Data(status: false, message: somethingWentWrong, data: null);
     }
   }
 }
