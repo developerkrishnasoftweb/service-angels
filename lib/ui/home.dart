@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:service_angels/constants/pallets.dart';
+import 'package:service_angels/enc_dec/enc_dec.dart';
 import 'package:service_angels/models/profession_card_model.dart';
 import 'package:service_angels/ui/profile.dart';
 

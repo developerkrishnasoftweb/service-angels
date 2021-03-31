@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:service_angels/constants/pallets.dart';
 import 'package:service_angels/enc_dec/enc_dec.dart';
+import 'package:service_angels/services/services.dart';
 import 'package:service_angels/ui/widgets/custom_dropdown.dart';
 import 'package:service_angels/ui/widgets/input.dart';
 
@@ -10,7 +11,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  bool isCheckedTnC = false;
+  bool isCheckedTnC = false, isLoading = false;
   List<String> titles = ["Mr", "Mrs"];
   TextEditingController username = TextEditingController(),
       firstName = TextEditingController(),
@@ -118,11 +119,8 @@ class _SignUpState extends State<SignUp> {
                                 ))
                             .toList(),
                         label: "Title"),
-                    input(
-                        text: "First Name", controller: firstName),
-                    input(
-                        text: "Last Name",
-                        controller: lastName),
+                    input(text: "First Name", controller: firstName),
+                    input(text: "Last Name", controller: lastName),
                     input(
                         text: "Phone Number",
                         keyboardType: TextInputType.phone,
@@ -148,27 +146,35 @@ class _SignUpState extends State<SignUp> {
                       height: 45,
                       width: double.infinity,
                       child: TextButton(
-                        child: Text("Sign Up",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                letterSpacing: 0.3)),
-                        onPressed: signUp,
+                        child: isLoading
+                            ? SizedBox(
+                                height: 30,
+                                width: 30,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 3))
+                            : Text("Sign Up",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    letterSpacing: 0.3)),
+                        onPressed: isLoading ? null : signUp,
                       ),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xff52E5E7),
-                                Color(0xff130CB7),
-                              ],
-                              stops: [
-                                0,
-                                1
-                              ]),
-                          borderRadius: BorderRadius.circular(8)),
+                      decoration: isLoading
+                          ? null
+                          : BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xff52E5E7),
+                                    Color(0xff130CB7),
+                                  ],
+                                  stops: [
+                                    0,
+                                    1
+                                  ]),
+                              borderRadius: BorderRadius.circular(8)),
                     ),
                     CheckboxListTile(
                         value: isCheckedTnC,
@@ -224,8 +230,12 @@ class _SignUpState extends State<SignUp> {
   }
 
   void signUp() async {
+    FocusScope.of(context).unfocus();
     if (isCheckedTnC) {
       if (password.text == confirmPassword.text) {
+        setState(() {
+          isLoading = true;
+        });
         String data = """{
       "usertype": $userType,
       "title": "$title",
@@ -238,8 +248,19 @@ class _SignUpState extends State<SignUp> {
       "seller_pincode": "${pinCode.text}",
       "telephone_service": $telephoneService
     }""";
-        print(data);
-        print(encrypt(data));
+        await Services.register(data).then((value) {
+          if (value.status) {
+            Navigator.pop<String>(context, username.text);
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(value.message)));
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(value.message)));
+          }
+        });
+        setState(() {
+          isLoading = false;
+        });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("Password and confirm password does not matched")));
@@ -250,23 +271,23 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
-  // void validateUsername(String v) {
-  //   if (RegExp(r"^[a-zA-Z0-9]+$").hasMatch(v)) {
-  //     return v;
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         content: Text("Username should not contain any special character")));
-  //     return '';
-  //   }
-  // }
-  //
-  // String validateNameString(String v) {
-  //   if (RegExp(r"^[a-zA-Z\s]+$").hasMatch(v)) {
-  //     return v;
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         content: Text("Name should not contain any special character")));
-  //     return '';
-  //   }
-  // }
+// void validateUsername(String v) {
+//   if (RegExp(r"^[a-zA-Z0-9]+$").hasMatch(v)) {
+//     return v;
+//   } else {
+//     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//         content: Text("Username should not contain any special character")));
+//     return '';
+//   }
+// }
+//
+// String validateNameString(String v) {
+//   if (RegExp(r"^[a-zA-Z\s]+$").hasMatch(v)) {
+//     return v;
+//   } else {
+//     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//         content: Text("Name should not contain any special character")));
+//     return '';
+//   }
+// }
 }

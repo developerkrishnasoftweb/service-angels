@@ -2,6 +2,7 @@ class Urls {
   /*
   * API Urls
   * */
-  static String baseUrl = "www.intellezen.com";
-  static String login = "/api/auth";
+  static String baseUrl = "www.serviceangels.in";
+  static String login = "/apiv2.0/auth";
+  static String register = "/apiv2.0/register";
 }

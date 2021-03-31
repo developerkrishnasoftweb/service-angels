@@ -25,4 +25,36 @@ class Services {
       return Data(status: false, message: somethingWentWrong, data: null);
     }
   }
+
+  static Future<Data> register(String body) async {
+    try {
+      http.Response response = await http.post(
+          Uri.https(Urls.baseUrl, Urls.register),
+          body: {"token": encrypt(body)});
+      if (response.statusCode == 200) {
+        return Data.fromJson(jsonDecode(decrypt(response.body)));
+      }
+      return Data(status: false, message: somethingWentWrong, data: null);
+    } on SocketException catch (_) {
+      return Data(status: false, message: noInternetConnection, data: null);
+    } catch (e) {
+      return Data(status: false, message: somethingWentWrong, data: null);
+    }
+  }
+
+  static Future<Data> getProposals(String body) async {
+    try {
+      http.Response response = await http.post(
+          Uri.https(Urls.baseUrl, Urls.register),
+          body: {"token": encrypt(body)});
+      if (response.statusCode == 200) {
+        return Data.fromJson(jsonDecode(decrypt(response.body)));
+      }
+      return Data(status: false, message: somethingWentWrong, data: null);
+    } on SocketException catch (_) {
+      return Data(status: false, message: noInternetConnection, data: null);
+    } catch (e) {
+      return Data(status: false, message: somethingWentWrong, data: null);
+    }
+  }
 }

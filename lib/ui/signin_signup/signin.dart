@@ -13,7 +13,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  String userName = "", password = "";
+  TextEditingController userName = TextEditingController(),
+      password = TextEditingController();
   bool isLoading = false;
 
   setLoading(bool status) {
@@ -99,13 +100,13 @@ class _SignInState extends State<SignIn> {
                     SizedBox(height: 45),
                     input(
                         text: "Email / Username",
-                        onChanged: (v) => setState(() => userName = v),
+                        controller: userName,
                         onEditingComplete: () =>
                             FocusScope.of(context).nextFocus(),
                         textInputAction: TextInputAction.next),
                     input(
                         text: "Password",
-                        onChanged: (v) => setState(() => password = v),
+                        controller: password,
                         obscureText: true,
                         onEditingComplete: login,
                         textInputAction: TextInputAction.next),
@@ -163,10 +164,15 @@ class _SignInState extends State<SignIn> {
                             children: [
                               WidgetSpan(
                                 child: GestureDetector(
-                                  onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => SignUp())),
+                                  onTap: () => Navigator.push<String>(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => SignUp()))
+                                      .then((value) {
+                                    setState(() {
+                                      userName.text = value;
+                                    });
+                                  }),
                                   child: Text("Sign Up",
                                       style: TextStyle(
                                           fontSize: 15,
@@ -188,12 +194,14 @@ class _SignInState extends State<SignIn> {
   }
 
   void login() async {
-    if (userName.isNotEmpty && password.isNotEmpty) {
+    FocusScope.of(context).unfocus();
+    if (userName.text.isNotEmpty && password.text.isNotEmpty) {
       setLoading(true);
-      String data = """{"username" : "$userName", "password" : "$password"}""";
-      print(encrypt(data));
+      String data =
+          """{"username" : "${userName.text}", "password" : "${password.text}"}""";
       await Services.login(data).then((value) {
         if (value.status) {
+          print(value.data);
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => Home()));
         } else {
