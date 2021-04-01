@@ -208,6 +208,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                             labelColor: Color(0xff2C62CA),
                                             unselectedLabelColor:
                                                 Color(0xffBABABA),
+                                            isScrollable: true,
                                             tabs: tabs
                                                 .map((e) => Padding(
                                                       padding:
