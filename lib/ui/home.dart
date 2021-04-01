@@ -56,9 +56,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    print(proposals[8].sellerTitle + proposals[8].sellerUserName);
-    print(proposals[8].sellerTitle.split(RegExp(r"\n")));
-    print(proposals[8].sellerUserName.split(RegExp(r"\n")));
     Size size = MediaQuery.of(context).size;
     return WillPopScope(
         onWillPop: exit,
