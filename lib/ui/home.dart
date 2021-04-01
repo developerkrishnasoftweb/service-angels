@@ -240,7 +240,7 @@ class _HomeState extends State<Home> {
 
 Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
   return Container(
-    height: 130,
+    height: 140,
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
     decoration: BoxDecoration(
@@ -316,11 +316,17 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
               children: [
                 Text("${proposal.sellerTitle.replaceAll("\n", "")} ${proposal.sellerUserName.replaceAll("\n", " ")}",
                     style: TextStyle(
-                        fontSize: 17,
+                        fontSize: 15,
                         color: Color(0xff30BBE9),
                         height: 1,
                         fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
-                SizedBox(height: 3),
+                SizedBox(height: 2),
+                Text("${proposal.proposalTitle}",
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Color(0xff494949),
+                        height: 1), maxLines: 2, overflow: TextOverflow.ellipsis),
+                SizedBox(height: 2),
                 RichText(
                   maxLines: 2,
                     text: TextSpan(
@@ -328,21 +334,21 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
                         style: TextStyle(
                             color: Color(0xff494949),
                             fontWeight: FontWeight.bold,
-                            fontSize: 15),
+                            fontSize: 13),
                         children: [
                       WidgetSpan(child: SizedBox(width: 10)),
                       TextSpan(text: "${proposal.languageKnown}")
                     ])),
                 Spacer(),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(7),
                       border: Border.all(color: primaryColor, width: 2)),
                   child: Text("Rs.${proposal.proposalPrice}/-Min",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                          fontSize: 13,
                           color: primaryColor)),
                 )
               ],

@@ -1,6 +1,7 @@
 class SellerData {
   SellerInfo sellerInfo;
   List<SellerReview> sellerReviews;
+  List<SellerGallery> sellerGallery;
 
   SellerData.fromJson(Map<String, dynamic> json) {
     sellerInfo = SellerInfo.fromJson(json['SellerInfo']);
@@ -8,6 +9,12 @@ class SellerData {
       sellerReviews = <SellerReview>[];
       json['reviews'].forEach((v) {
         sellerReviews.add(new SellerReview.fromJson(v));
+      });
+    }
+    if(json['gallery'] != null) {
+      sellerGallery = <SellerGallery>[];
+      json['gallery'].forEach((v) {
+        sellerGallery.add(SellerGallery.fromJson(v));
       });
     }
   }
@@ -140,5 +147,14 @@ class SellerReview {
     data['timestamp'] = this.timestamp;
     data['days'] = this.days;
     return data;
+  }
+}
+
+class SellerGallery {
+  String id, imageUrl;
+  SellerGallery({this.id, this.imageUrl});
+  SellerGallery.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    imageUrl = json['imageURL'];
   }
 }

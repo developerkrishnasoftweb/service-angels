@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:service_angels/constants/pallets.dart';
 import 'package:service_angels/models/seller_data_model.dart';
 import 'package:service_angels/services/services.dart';
+import 'package:service_angels/services/urls.dart';
 
 class Profile extends StatefulWidget {
   final String sellerId;
@@ -222,9 +224,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                         Expanded(
                                           child: TabBarView(
                                             children: [
-                                              Center(child: Text("Gallery")),
+                                              gallery(),
                                               info(),
-                                              Center(child: Text("Reviews")),
+                                              reviews(),
                                             ],
                                             physics: BouncingScrollPhysics(),
                                           ),
@@ -245,7 +247,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               ? Align(
                   alignment: Alignment(0.0, -0.77),
                   child: ClipRRect(
-                      child: Image.asset("assets/images/profile-image.png"),
+                      child: Image.network(
+                        Uri.https(
+                                Urls.baseUrl, sellerData.sellerInfo.sellerImage)
+                            .toString(),
+                        fit: BoxFit.cover,
+                        width: 100,
+                        height: 100,
+                      ),
                       borderRadius: BorderRadius.circular(100)))
               : SizedBox(),
         ],
@@ -258,6 +267,45 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               backgroundColor: Color(0xff2C62CA),
             )
           : null,
+    );
+  }
+
+  Widget serviceRow(String title, String value) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                child: Text("$title",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Color(0xff4A4747).withOpacity(0.8)),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
+              ),
+            ),
+            Expanded(
+                child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                      child: Text("$value",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Color(0xff4A4747).withOpacity(0.8)),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center),
+                    ))),
+          ],
+        ),
+        Divider(color: Color(0xffE9E9E9), thickness: 2),
+      ],
     );
   }
 
@@ -274,7 +322,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               child: Text("Services",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Color(0xff494747))),
             ),
           ),
@@ -290,7 +338,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               child: Text("Description",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Color(0xff494747))),
             ),
           ),
@@ -311,39 +359,71 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget serviceRow(String title, String value) {
+  Widget gallery() {
+    return sellerData.sellerGallery.length > 0
+        ? GridView.count(
+            crossAxisCount: 3,
+            padding: EdgeInsets.all(10),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            physics: BouncingScrollPhysics(),
+            children: sellerData.sellerGallery.map((gallery) {
+              return Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10)
+                      ],
+                      image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(
+                              Uri.https(Urls.baseUrl, gallery.imageUrl)
+                                  .toString()))));
+            }).toList(),
+          )
+        : Center(
+            child: Text("No gallery found"),
+          );
+  }
+
+  Widget reviews() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-                child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-              child: Text("$title",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                      color: Color(0xff4A4747).withOpacity(0.8)),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis),
-            )),
-            Expanded(
-                child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                      child: Text("$value",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                              color: Color(0xff4A4747).withOpacity(0.8)),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
-                    ))),
-          ],
-        ),
-        Divider(color: Color(0xffE9E9E9), thickness: 2),
+        Text("Reviews (${sellerData.sellerReviews.length} ratings)",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: Color(0xff494747))),
+        Expanded(
+            child: ListView.builder(
+          itemBuilder: (_, index) {
+            return ListTile(
+              title: Row(
+                children: [
+                  Text("Hello"),
+                  Row(
+                    children: List.generate(5, (i) {
+                      return Icon(
+                        Icons.star,
+                        color: i <
+                                double.parse(
+                                        sellerData.sellerReviews[index].ratings)
+                                    .floor()
+                            ? Color(0xffFFC107)
+                            : Color(0xffD6D6D6),
+                      );
+                    }),
+                  )
+                ],
+              ),
+              onTap: () {},
+            );
+          },
+          itemCount: sellerData.sellerReviews.length,
+        ))
       ],
     );
   }

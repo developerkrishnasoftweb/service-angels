@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:service_angels/constants/global.dart';
 import 'package:service_angels/constants/pallets.dart';
 import 'package:service_angels/enc_dec/enc_dec.dart';
+import 'package:service_angels/models/userdata_model.dart';
 import 'package:service_angels/services/services.dart';
 import 'package:service_angels/ui/widgets/custom_dropdown.dart';
 import 'package:service_angels/ui/widgets/input.dart';
+
+import '../home.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -83,7 +87,8 @@ class _SignUpState extends State<SignUp> {
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
                   child: Column(children: [
-                    Image.asset('assets/images/Service-Angels-Logo.png', fit: BoxFit.fill, height: 70),
+                    Image.asset('assets/images/Service-Angels-Logo.png',
+                        fit: BoxFit.fill, height: 70),
                     SizedBox(height: 30),
                     Align(
                         alignment: Alignment.centerLeft,
@@ -209,15 +214,15 @@ class _SignUpState extends State<SignUp> {
                                   color: Color(0xff6B6B6B)),
                               children: [
                             WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
+                                alignment: PlaceholderAlignment.middle,
                                 child: GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: Text("Log In",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryColor)),
-                            ))
+                                  onTap: () => Navigator.pop(context),
+                                  child: Text("Log In",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryColor)),
+                                ))
                           ])),
                     ),
                   ]),
@@ -249,11 +254,21 @@ class _SignUpState extends State<SignUp> {
       "seller_pincode": "${pinCode.text}",
       "telephone_service": $telephoneService
     }""";
-        await Services.register(data).then((value) {
+        await Services.register(data).then((value) async {
           if (value.status) {
-            Navigator.pop<String>(context, username.text);
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(value.message)));
+            // Navigator.pop<String>(context, username.text);
+            String loginData =
+                """{"username" : "${username.text}", "password" : "${password.text}"}""";
+            await Services.login(loginData).then((value) {
+              if (value.status) {
+                userdata = Userdata.fromJson(value.data);
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (_) => Home()));
+              } else {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(value.message)));
+              }
+            });
           } else {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(value.message)));
