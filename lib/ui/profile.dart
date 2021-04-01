@@ -153,7 +153,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                 : Color(0xffFD3216))),
                                   ),
                                 ),
-                                Text("${sellerData.sellerInfo.firstname}",
+                                Text("${sellerData.sellerInfo.sellerUserName}",
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -279,7 +279,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             ),
           ),
           serviceRow("Experience", "${sellerData.sellerInfo.experience} Years"),
-          serviceRow("Skills", "simply dummy"),
+          serviceRow("Skills", "N/A"),
           serviceRow("Expertise", "${sellerData.sellerInfo.sellerExpertise}"),
           serviceRow(
               "Languages Known", "${sellerData.sellerInfo.languageKnown}"),
@@ -296,6 +296,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
           ),
           Container(
             padding: EdgeInsets.all(10),
+            width: double.infinity,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(13),
                 border: Border.all(color: Color(0xffE9E9E9))),

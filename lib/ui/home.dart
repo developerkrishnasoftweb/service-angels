@@ -41,6 +41,7 @@ class _HomeState extends State<Home> {
 
   void getProposals() async {
     String data = """{"category" : "2", "subcategory" : "00"}""";
+    data = "";
     proposals.clear();
     await Services.getProposals(data).then((value) {
       if (value.status) {
@@ -55,6 +56,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    print(proposals[8].sellerTitle + proposals[8].sellerUserName);
+    print(proposals[8].sellerTitle.split(RegExp(r"\n")));
+    print(proposals[8].sellerUserName.split(RegExp(r"\n")));
     Size size = MediaQuery.of(context).size;
     return WillPopScope(
         onWillPop: exit,
@@ -239,7 +243,7 @@ class _HomeState extends State<Home> {
 
 Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
   return Container(
-    height: 120,
+    height: 130,
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
     decoration: BoxDecoration(
@@ -278,8 +282,10 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
                 ),
               ),
             ),
-            RichText(
+            SizedBox(width: 80, child: RichText(
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               text: TextSpan(children: [
                 WidgetSpan(
                     child: Icon(
@@ -289,7 +295,7 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
                     ),
                     alignment: PlaceholderAlignment.middle),
                 TextSpan(
-                    text: "4.8",
+                    text: "${proposal.sellerRating}",
                     style: TextStyle(
                         color: Color(0xffFFC107),
                         fontSize: 14,
@@ -302,7 +308,7 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
                         fontSize: 14,
                         fontWeight: FontWeight.bold))
               ]),
-            )
+            ))
           ],
         ),
         Expanded(
@@ -311,12 +317,15 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${proposal.sellerTitle} ${proposal.sellerUserName}",
+                Text("${proposal.sellerTitle.replaceAll("\n", "")} ${proposal.sellerUserName.replaceAll("\n", " ")}",
                     style: TextStyle(
                         fontSize: 17,
                         color: Color(0xff30BBE9),
-                        fontWeight: FontWeight.bold)),
+                        height: 1,
+                        fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
+                SizedBox(height: 3),
                 RichText(
+                  maxLines: 2,
                     text: TextSpan(
                         text: "Exp:${proposal.experience} Years",
                         style: TextStyle(
