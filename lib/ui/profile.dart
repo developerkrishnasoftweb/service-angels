@@ -389,6 +389,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   }
 
   Widget reviews() {
+    double ratings = 0;
+    sellerData.sellerReviews.forEach((review) {
+      ratings += double.parse(review.ratings);
+    });
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -397,33 +401,78 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
                 color: Color(0xff494747))),
+        Row(
+          children: [
+            Text("${sellerData.sellerReviews.length > 0 ? ratings / sellerData.sellerReviews.length : 0.0}",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Color(0xff494747))),
+            SizedBox(width: 10),
+            for (int i = 0; i < 5; i++)
+              Icon(
+                Icons.star,
+                color:
+                    i < ratings.ceil() ? Color(0xffFFC107) : Color(0xffD6D6D6),
+                size: 28,
+              )
+          ],
+        ),
         Expanded(
-            child: ListView.builder(
-          itemBuilder: (_, index) {
-            return ListTile(
-              title: Row(
-                children: [
-                  Text("Hello"),
-                  Row(
-                    children: List.generate(5, (i) {
-                      return Icon(
-                        Icons.star,
-                        color: i <
-                                double.parse(
-                                        sellerData.sellerReviews[index].ratings)
-                                    .floor()
-                            ? Color(0xffFFC107)
-                            : Color(0xffD6D6D6),
-                      );
-                    }),
-                  )
-                ],
-              ),
-              onTap: () {},
-            );
-          },
-          itemCount: sellerData.sellerReviews.length,
-        ))
+          child: ListView.separated(
+            physics: BouncingScrollPhysics(),
+            separatorBuilder: (_, index) {
+              return Divider(color: Colors.grey);
+            },
+            itemBuilder: (_, index) {
+              return ListTile(
+                title: Row(
+                  children: [
+                    Expanded(
+                        child: Text("${sellerData.sellerReviews[index].userid}",
+                            style: TextStyle(
+                                fontSize: 17, fontWeight: FontWeight.bold),
+                            maxLines: 5,
+                            overflow: TextOverflow.ellipsis)),
+                    Row(
+                      children: List.generate(5, (i) {
+                        return Icon(
+                          Icons.star,
+                          color: i <
+                                  double.parse(sellerData
+                                          .sellerReviews[index].ratings)
+                                      .ceil()
+                              ? Color(0xffFFC107)
+                              : Color(0xffD6D6D6),
+                          size: 20,
+                        );
+                      }),
+                    )
+                  ],
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${sellerData.sellerReviews[index].comments}",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                          "${sellerData.sellerReviews[index].timestamp}",
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold)),
+                    )
+                  ],
+                ),
+                onTap: () {},
+              );
+            },
+            itemCount: sellerData.sellerReviews.length,
+          ),
+        )
       ],
     );
   }
