@@ -165,6 +165,7 @@ class _SignInState extends State<SignIn> {
                                 color: Color(0xff6B6B6B)),
                             children: [
                               WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
                                 child: GestureDetector(
                                   onTap: () => Navigator.push<String>(
                                           context,

@@ -38,7 +38,6 @@ Widget input(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.grey, width: 2)),
-                  hintText: text,
                   contentPadding: contentPadding ??
                       EdgeInsets.symmetric(vertical: 10, horizontal: 10)),
         ),

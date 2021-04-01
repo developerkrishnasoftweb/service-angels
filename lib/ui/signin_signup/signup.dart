@@ -209,6 +209,7 @@ class _SignUpState extends State<SignUp> {
                                   color: Color(0xff6B6B6B)),
                               children: [
                             WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
                                 child: GestureDetector(
                               onTap: () => Navigator.pop(context),
                               child: Text("Log In",
