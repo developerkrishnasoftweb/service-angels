@@ -1,12 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:service_angels/models/seller_data_model.dart';
+import 'package:service_angels/services/services.dart';
 
 class Profile extends StatefulWidget {
+  final String sellerId;
+
+  const Profile({Key key, @required this.sellerId}) : super(key: key);
+
   @override
   _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   List<String> tabs = ["Gallery", "Info", "Reviews"];
+  bool isLoading = false;
+  SellerData sellerData;
+
+  setLoading(bool status) {
+    setState(() {
+      isLoading = status;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getSeller();
+  }
+
+  void getSeller() async {
+    String body = """{"seller_id" : "${widget.sellerId}"}""";
+    setLoading(true);
+    await Services.getSeller(body).then((value) {
+      if (value.status) {
+        setState(() {
+          sellerData = value.data;
+        });
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(value.message)));
+      }
+    });
+    setLoading(false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,129 +102,162 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 ],
               ),
               Expanded(
-                  child: Container(
-                width: size.width * 0.9,
-                margin: EdgeInsets.only(bottom: 10, top: 60),
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.2), blurRadius: 10)
-                    ],
-                    borderRadius: BorderRadius.circular(15)),
-                child: Column(
-                  children: [
-                    // CustomPaint(
-                    //   painter: TagPainter(),
-                    //   size: Size(100, 100),
-                    // ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        width: 75,
-                        height: 30,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            color: Color(0xffFD3216).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Text("offline",
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xffFD3216))),
-                      ),
-                    ),
-                    Text("Uncle John",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff4B4B4B))),
-                    Text("Verified professional",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xffa4a0a0))),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (int i = 0; i < 5; i++)
-                            Icon(Icons.star,
-                                color: i != 4
-                                    ? Color(0xffFFC107)
-                                    : Color(0xffD6D6D6)),
-                          SizedBox(width: 7),
-                          Text("4.7",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff4B4B4B))),
-                        ],
-                      ),
-                    ),
-                    Text("Service Offered to: 1200",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff666666))),
-                    Text("Rates : 40 p.m",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff666666))),
-                    SizedBox(height: 20),
-                    Expanded(
-                      child: DefaultTabController(
-                        length: tabs.length,
-                        initialIndex: 1,
-                        child: Column(children: [
-                          TabBar(
-                              physics: BouncingScrollPhysics(),
-                              indicatorColor: Color(0xff2C62CA),
-                              labelColor: Color(0xff2C62CA),
-                              unselectedLabelColor: Color(0xffBABABA),
-                              tabs: tabs
-                                  .map((e) => Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(e,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16)),
-                                      ))
-                                  .toList()),
-                          Expanded(
-                            child: TabBarView(
+                child: Container(
+                  width: size.width * 0.9,
+                  margin: EdgeInsets.only(bottom: 10, top: 60),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10)
+                      ],
+                      borderRadius: BorderRadius.circular(15)),
+                  child: isLoading
+                      ? Center(child: CircularProgressIndicator())
+                      : sellerData != null
+                          ? Column(
                               children: [
-                                Center(child: Text("Gallery")),
-                                info(),
-                                Center(child: Text("Reviews")),
+                                // CustomPaint(
+                                //   painter: TagPainter(),
+                                //   size: Size(100, 100),
+                                // ),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 3),
+                                    width: 80,
+                                    height: 30,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        color: sellerData.sellerInfo.isOnline !=
+                                                "0"
+                                            ? Color(0xff32DB08).withOpacity(0.2)
+                                            : Color(0xffFD3216)
+                                                .withOpacity(0.2),
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    child: Text(
+                                        sellerData.sellerInfo.isOnline != "0"
+                                            ? "online"
+                                            : "offline",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: sellerData
+                                                        .sellerInfo.isOnline !=
+                                                    "0"
+                                                ? Color(0xff32DB08)
+                                                : Color(0xffFD3216))),
+                                  ),
+                                ),
+                                Text("${sellerData.sellerInfo.firstname}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff4B4B4B))),
+                                Text("Verified professional",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xffa4a0a0))),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      for (int i = 0; i < 5; i++)
+                                        Icon(Icons.star,
+                                            color: i != 4
+                                                ? Color(0xffFFC107)
+                                                : Color(0xffD6D6D6)),
+                                      SizedBox(width: 7),
+                                      Text(
+                                          "${sellerData.sellerInfo.sellerRating}",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xff4B4B4B))),
+                                    ],
+                                  ),
+                                ),
+                                Text("Service Offered to: 1200",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff666666))),
+                                Text("Rates : 40 p.m",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff666666))),
+                                SizedBox(height: 20),
+                                Expanded(
+                                  child: DefaultTabController(
+                                    length: tabs.length,
+                                    initialIndex: 1,
+                                    child: Column(
+                                      children: [
+                                        TabBar(
+                                            physics: BouncingScrollPhysics(),
+                                            indicatorColor: Color(0xff2C62CA),
+                                            labelColor: Color(0xff2C62CA),
+                                            unselectedLabelColor:
+                                                Color(0xffBABABA),
+                                            tabs: tabs
+                                                .map((e) => Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Text(e,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 16)),
+                                                    ))
+                                                .toList()),
+                                        Expanded(
+                                          child: TabBarView(
+                                            children: [
+                                              Center(child: Text("Gallery")),
+                                              info(),
+                                              Center(child: Text("Reviews")),
+                                            ],
+                                            physics: BouncingScrollPhysics(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
                               ],
-                              physics: BouncingScrollPhysics(),
-                            ),
-                          ),
-                        ]),
-                      ),
-                    )
-                  ],
+                            )
+                          : Center(
+                              child: Text("Unable to fetch requested seller")),
                 ),
-              ))
+              )
             ],
           ),
-          Align(
-              alignment: Alignment(0.0, -0.77),
-              child: ClipRRect(
-                  child: Image.asset("assets/images/profile-image.png"),
-                  borderRadius: BorderRadius.circular(100))),
+          !isLoading && sellerData != null
+              ? Align(
+                  alignment: Alignment(0.0, -0.77),
+                  child: ClipRRect(
+                      child: Image.asset("assets/images/profile-image.png"),
+                      borderRadius: BorderRadius.circular(100)))
+              : SizedBox(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: ImageIcon(AssetImage("assets/images/icons/calendar-icon.png")),
-        onPressed: () {},
-        backgroundColor: Color(0xff2C62CA),
-      ),
+      floatingActionButton: !isLoading && sellerData != null
+          ? FloatingActionButton(
+              child: ImageIcon(
+                  AssetImage("assets/images/icons/calendar-icon.png")),
+              onPressed: () {},
+              backgroundColor: Color(0xff2C62CA),
+            )
+          : null,
     );
   }
 
@@ -209,10 +278,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       color: Color(0xff494747))),
             ),
           ),
-          serviceRow("Experience", "simply dummy"),
+          serviceRow("Experience", "${sellerData.sellerInfo.experience} Years"),
           serviceRow("Skills", "simply dummy"),
-          serviceRow("Expertise", "simply dummy"),
-          serviceRow("Languages Known", "simply dummy"),
+          serviceRow("Expertise", "${sellerData.sellerInfo.sellerExpertise}"),
+          serviceRow(
+              "Languages Known", "${sellerData.sellerInfo.languageKnown}"),
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
@@ -229,8 +299,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(13),
                 border: Border.all(color: Color(0xffE9E9E9))),
-            child: Text(
-                "simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s  Lorem Ipsum has been the industry's standard dummy text ",
+            child: Text("${sellerData.sellerInfo.description}",
                 style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -269,7 +338,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                               fontSize: 17,
                               color: Color(0xff4A4747).withOpacity(0.8)),
                           maxLines: 2,
-                          overflow: TextOverflow.ellipsis),
+                          overflow: TextOverflow.ellipsis, textAlign: TextAlign.center),
                     ))),
           ],
         ),
@@ -284,7 +353,8 @@ class TagPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
       ..color = Colors.yellow
-      ..strokeCap = StrokeCap.round..strokeWidth = 3
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
     Path path = Path();
     path.moveTo(60, 130);

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:service_angels/constants/global.dart';
 import 'package:service_angels/constants/pallets.dart';
 import 'package:service_angels/enc_dec/enc_dec.dart';
+import 'package:service_angels/models/userdata_model.dart';
 import 'package:service_angels/services/services.dart';
 import 'package:service_angels/ui/signin_signup/signup.dart';
 import 'package:service_angels/ui/widgets/input.dart';
@@ -201,7 +203,7 @@ class _SignInState extends State<SignIn> {
           """{"username" : "${userName.text}", "password" : "${password.text}"}""";
       await Services.login(data).then((value) {
         if (value.status) {
-          print(value.data);
+          userdata = Userdata.fromJson(value.data);
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => Home()));
         } else {

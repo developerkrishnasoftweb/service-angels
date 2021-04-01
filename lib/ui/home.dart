@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:service_angels/constants/global.dart';
 import 'package:service_angels/constants/pallets.dart';
 import 'package:service_angels/enc_dec/enc_dec.dart';
 import 'package:service_angels/models/profession_card_model.dart';
+import 'package:service_angels/models/proposal_model.dart';
+import 'package:service_angels/services/services.dart';
 import 'package:service_angels/ui/profile.dart';
 
 class Home extends StatefulWidget {
@@ -11,7 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   double dividerIndent = 10;
-
+  List<Proposal> proposals = [];
   List<ProfessionCardInfo> professions = [
     ProfessionCardInfo.asset('assets/images/icons/profession-doctor-icon.png',
         name: 'Doctors'),
@@ -28,6 +31,26 @@ class _HomeState extends State<Home> {
         'assets/images/icons/profession-it-consultant-icon.png',
         name: 'IT Consultant')
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    getProposals();
+  }
+
+  void getProposals() async {
+    String data = """{"category" : "2", "subcategory" : "00"}""";
+    proposals.clear();
+    await Services.getProposals(data).then((value) {
+      if (value.status) {
+        setState(() {
+          proposals = value.data;
+        });
+      } else {
+        proposals = null;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +102,7 @@ class _HomeState extends State<Home> {
                                       color: Colors.white,
                                       fontSize: 19,
                                       fontWeight: FontWeight.bold)),
-                              Text("Jane Smith",
+                              Text("${userdata.firstname} ${userdata.lastname}",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 17,
@@ -178,14 +201,20 @@ class _HomeState extends State<Home> {
                                 fontWeight: FontWeight.bold)),
                       )),
                   Expanded(
-                    child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        physics: BouncingScrollPhysics(),
-                        itemBuilder: (_, index) {
-                          return buildConsultantsCard(context,
-                              isOnline: index != 1);
-                        },
-                        itemCount: 3),
+                    child: proposals != null
+                        ? proposals.length > 0
+                            ? ListView.builder(
+                                padding: EdgeInsets.zero,
+                                physics: BouncingScrollPhysics(),
+                                itemBuilder: (_, index) {
+                                  return buildConsultantsCard(
+                                      context, proposals[index]);
+                                },
+                                itemCount: proposals.length)
+                            : Center(child: CircularProgressIndicator())
+                        : Center(
+                            child: Text(
+                                "Sorry, we are unable to find proposals for you")),
                   )
                 ],
               )
@@ -195,9 +224,9 @@ class _HomeState extends State<Home> {
   }
 }
 
-Widget buildConsultantsCard(BuildContext context, {bool isOnline: true}) {
+Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
   return Container(
-    height: 130,
+    height: 120,
     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
     decoration: BoxDecoration(
@@ -212,7 +241,10 @@ Widget buildConsultantsCard(BuildContext context, {bool isOnline: true}) {
           children: [
             GestureDetector(
               onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => Profile())),
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) =>
+                          Profile(sellerId: proposal.proposalSellerId))),
               child: Container(
                 padding: EdgeInsets.all(3),
                 alignment: Alignment.center,
@@ -265,35 +297,34 @@ Widget buildConsultantsCard(BuildContext context, {bool isOnline: true}) {
             padding: EdgeInsets.symmetric(horizontal: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text("Dr Ganesh Shastri",
+                Text("${proposal.sellerTitle} ${proposal.sellerUserName}",
                     style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 17,
                         color: Color(0xff30BBE9),
                         fontWeight: FontWeight.bold)),
                 RichText(
                     text: TextSpan(
-                        text: "Exp:20 + Years",
+                        text: "Exp:${proposal.experience} Years",
                         style: TextStyle(
                             color: Color(0xff494949),
                             fontWeight: FontWeight.bold,
                             fontSize: 15),
                         children: [
                       WidgetSpan(child: SizedBox(width: 10)),
-                      TextSpan(text: "Hindi, English")
+                      TextSpan(text: "${proposal.languageKnown}")
                     ])),
-                TextButton(
-                  onPressed: () {},
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7),
-                          side: BorderSide(color: primaryColor, width: 2))),
-                      padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(horizontal: 10))),
-                  child: Text("Rs.30/-Min",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7),
+                      border: Border.all(color: primaryColor, width: 2)),
+                  child: Text("Rs.${proposal.proposalPrice}/-Min",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: primaryColor)),
                 )
               ],
             ),
@@ -306,7 +337,7 @@ Widget buildConsultantsCard(BuildContext context, {bool isOnline: true}) {
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                  color: isOnline
+                  color: proposal.isOnline != "0"
                       ? Color(0xff32DB08).withOpacity(0.2)
                       : Color(0xffFD3216).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(5)),
@@ -316,16 +347,19 @@ Widget buildConsultantsCard(BuildContext context, {bool isOnline: true}) {
                     height: 8,
                     width: 8,
                     decoration: BoxDecoration(
-                        color: isOnline ? Color(0xff32DB08) : Color(0xffFD3216),
+                        color: proposal.isOnline != "0"
+                            ? Color(0xff32DB08)
+                            : Color(0xffFD3216),
                         shape: BoxShape.circle),
                   ),
                   SizedBox(width: 5),
-                  Text(isOnline ? "online" : "offline",
+                  Text(proposal.isOnline != "0" ? "online" : "offline",
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color:
-                              isOnline ? Color(0xff32DB08) : Color(0xffFD3216)))
+                          color: proposal.isOnline != "0"
+                              ? Color(0xff32DB08)
+                              : Color(0xffFD3216)))
                 ],
               ),
             ),
