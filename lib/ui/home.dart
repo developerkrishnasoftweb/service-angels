@@ -15,6 +15,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   double dividerIndent = 10;
   List<Proposal> proposals = [];
+  DateTime currentBackPressTime;
   List<ProfessionCardInfo> professions = [
     ProfessionCardInfo.asset('assets/images/icons/profession-doctor-icon.png',
         name: 'Doctors'),
@@ -56,7 +57,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return WillPopScope(
-        onWillPop: () => Future.value(false),
+        onWillPop: exit,
         child: Scaffold(
           backgroundColor: Colors.white,
           body: Stack(
@@ -221,6 +222,18 @@ class _HomeState extends State<Home> {
             ],
           ),
         ));
+  }
+
+  Future<bool> exit() {
+    DateTime now = DateTime.now();
+    if (currentBackPressTime == null ||
+        now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+      currentBackPressTime = now;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Press again to exit")));
+      return Future.value(false);
+    }
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    return Future.value(true);
   }
 }
 
