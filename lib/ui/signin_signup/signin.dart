@@ -83,7 +83,7 @@ class _SignInState extends State<SignIn> {
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
                   child: Column(children: [
-                    Image.asset('assets/images/Service-Angels-Logo.png'),
+                    Image.asset('assets/images/Service-Angels-Logo.png', fit: BoxFit.fill, height: 70),
                     SizedBox(height: 30),
                     Align(
                         alignment: Alignment.centerLeft,
