@@ -5,6 +5,7 @@ import 'package:service_angels/enc_dec/enc_dec.dart';
 import 'package:service_angels/models/profession_card_model.dart';
 import 'package:service_angels/models/proposal_model.dart';
 import 'package:service_angels/services/services.dart';
+import 'package:service_angels/services/urls.dart';
 import 'package:service_angels/ui/profile.dart';
 
 class Home extends StatefulWidget {
@@ -125,8 +126,16 @@ class _HomeState extends State<Home> {
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
-                                    image:
-                                        AssetImage('assets/images/avatar.jpg'),
+                                    image: userdata.sellerImage != null
+                                        ? userdata.sellerImage.isNotEmpty
+                                            ? NetworkImage(Uri.https(
+                                                    Urls.baseUrl,
+                                                    userdata.sellerImage)
+                                                .toString())
+                                            : AssetImage(
+                                                "assets/images/service_angels_avatar_logo.png")
+                                        : AssetImage(
+                                            "assets/images/service_angels_avatar_logo.png"),
                                     alignment: Alignment.center,
                                     fit: BoxFit.fill)),
                           ),
@@ -230,7 +239,8 @@ class _HomeState extends State<Home> {
     if (currentBackPressTime == null ||
         now.difference(currentBackPressTime) > Duration(seconds: 2)) {
       currentBackPressTime = now;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Press again to exit")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Press again to exit")));
       return Future.value(false);
     }
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -273,39 +283,43 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                          image: AssetImage('assets/images/avatar.jpg'),
+                          image: NetworkImage(
+                              Uri.https(Urls.baseUrl, proposal.sellerImage)
+                                  .toString()),
                           alignment: Alignment.center,
                           fit: BoxFit.fill)),
                 ),
               ),
             ),
-            SizedBox(width: 80, child: RichText(
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              text: TextSpan(children: [
-                WidgetSpan(
-                    child: Icon(
-                      Icons.star,
-                      color: Color(0xffFFC107),
-                      size: 24,
-                    ),
-                    alignment: PlaceholderAlignment.middle),
-                TextSpan(
-                    text: "${proposal.sellerRating}",
-                    style: TextStyle(
-                        color: Color(0xffFFC107),
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold)),
-                WidgetSpan(child: SizedBox(width: 5)),
-                TextSpan(
-                    text: "(10)",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold))
-              ]),
-            ))
+            SizedBox(
+                width: 80,
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(children: [
+                    WidgetSpan(
+                        child: Icon(
+                          Icons.star,
+                          color: Color(0xffFFC107),
+                          size: 24,
+                        ),
+                        alignment: PlaceholderAlignment.middle),
+                    TextSpan(
+                        text: "${proposal.sellerRating}",
+                        style: TextStyle(
+                            color: Color(0xffFFC107),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
+                    WidgetSpan(child: SizedBox(width: 5)),
+                    TextSpan(
+                        text: "(10)",
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold))
+                  ]),
+                ))
           ],
         ),
         Expanded(
@@ -314,21 +328,24 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("${proposal.sellerTitle.replaceAll("\n", "")} ${proposal.sellerUserName.replaceAll("\n", " ")}",
+                Text(
+                    "${proposal.sellerTitle.replaceAll("\n", "")} ${proposal.sellerUserName.replaceAll("\n", " ")}",
                     style: TextStyle(
                         fontSize: 15,
                         color: Color(0xff30BBE9),
                         height: 1,
-                        fontWeight: FontWeight.bold), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
                 SizedBox(height: 2),
                 Text("${proposal.proposalTitle}",
                     style: TextStyle(
-                        fontSize: 13,
-                        color: Color(0xff494949),
-                        height: 1), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        fontSize: 13, color: Color(0xff494949), height: 1),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
                 SizedBox(height: 2),
                 RichText(
-                  maxLines: 2,
+                    maxLines: 2,
                     text: TextSpan(
                         text: "Exp:${proposal.experience} Years",
                         style: TextStyle(
@@ -336,9 +353,9 @@ Widget buildConsultantsCard(BuildContext context, Proposal proposal) {
                             fontWeight: FontWeight.bold,
                             fontSize: 13),
                         children: [
-                      WidgetSpan(child: SizedBox(width: 10)),
-                      TextSpan(text: "${proposal.languageKnown}")
-                    ])),
+                          WidgetSpan(child: SizedBox(width: 10)),
+                          TextSpan(text: "${proposal.languageKnown}")
+                        ])),
                 Spacer(),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),

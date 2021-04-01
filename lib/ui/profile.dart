@@ -403,7 +403,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 color: Color(0xff494747))),
         Row(
           children: [
-            Text("${sellerData.sellerReviews.length > 0 ? ratings / sellerData.sellerReviews.length : 0.0}",
+            Text(
+                "${sellerData.sellerReviews.length > 0 ? ratings / sellerData.sellerReviews.length : 0.0}",
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
