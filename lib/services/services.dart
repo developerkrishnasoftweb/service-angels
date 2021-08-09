@@ -84,7 +84,6 @@ class Services {
     } on SocketException catch (_) {
       return Data(status: false, message: noInternetConnection, data: null);
     } catch (e) {
-      throw(e);
       return Data(status: false, message: somethingWentWrong, data: null);
     }
   }
